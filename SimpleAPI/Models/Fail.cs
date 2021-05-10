@@ -2,10 +2,10 @@
 
 namespace SimpleAPI.Models
 {
-    class Send
+    class Fail
     {
         public string status { get; set; }
         public string operation { get; set; }
-        public int item_id { get; set; }
+        public string message { get; set; }
     }
 }

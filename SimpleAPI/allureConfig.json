@@ -1,0 +1,12 @@
+﻿{
+  "allure": {
+    "directory": "F:\\C__C++__C#\\SimpleAPI\\SimpleAPI\\Allure-Results",
+    "links": [
+      "https://example.org/{issue}",
+      "https://example.org/{tms}"
+    ],
+    "brokenTestData": [
+      "System.Exception"
+    ]
+  }
+}

@@ -1,21 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using System.Net.Http;
 using SimpleAPI.Models;
 using Newtonsoft.Json;
 using System.Collections;
+using System.Net;
+using Allure.Commons;
+using NUnit.Allure.Core;
+
 
 namespace SimpleAPI.Tests
 {
+    [AllureNUnit]
     class BaseTest 
     {
         protected readonly string authString = "grant_type=password&username={0}&password={1}";
-        protected HttpClient client;
         protected HttpRequestMessage request;
+        protected HttpClient client;
         protected string token;
 
         protected void GetToken()
@@ -46,14 +48,37 @@ namespace SimpleAPI.Tests
             }
         }
 
+        protected int GetItemsCount()
+        {
+            request = new HttpRequestMessage(HttpMethod.Get, Endpoints.info);
+            request.Headers.Add("Authorization", "Bearer " + token);
+            Task<HttpResponseMessage> responseMessage = client.SendAsync(request);
+            var content = responseMessage.Result.Content.ReadAsStringAsync();
+            var deserialized = JsonConvert.DeserializeObject<Info>(content.Result);
+            Assert.AreEqual(HttpStatusCode.OK, responseMessage.Result.StatusCode);
+            return int.Parse(deserialized.storage.Split(' ')[0]);
+        }
+
         [OneTimeSetUp]
         public void SetUp()
-        {
-            Env.Initialize();
+        {          
             client = new HttpClient();
             string testMethodName = TestContext.CurrentContext.Test.Name;
             if (!(testMethodName.Contains("Cookies") || testMethodName.Contains("WithoutAuth")))
                 GetToken();
+        }
+    }
+
+    [SetUpFixture]
+    class TestSession
+    {
+        [OneTimeSetUp]
+        public void SetUp()
+        {
+            Env.Initialize();  
+            AllureExtensions.WrapSetUpTearDownParams(
+                () => { AllureLifecycle.Instance.CleanupResultDirectory(); },
+                "Cleanup Allure Results Directory");
         }
     }
 }

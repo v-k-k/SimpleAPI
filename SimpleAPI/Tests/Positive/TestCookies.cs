@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Allure.Commons;
+using NUnit.Allure.Attributes;
 using NUnit.Framework;
 using System;
 using System.Net;
@@ -10,8 +11,15 @@ namespace SimpleAPI.Tests.Positive
     [TestFixture]
     class TestCookies : BaseTest
     {
-        [Test, Order(9)]
+        [Test(Author = "Me", Description = "Checks cookies setting"), Order(9)]
         [TestCase("fakesession=fake-cookie-session-value")]
+        [AllureTag("TC-9")]
+        [AllureSeverity(SeverityLevel.normal)]
+        [AllureIssue("ISSUE-9")]
+        [AllureTms("My-TMS")]
+        [AllureOwner("Me")]
+        [AllureSuite("Positive")]
+        [AllureSubSuite("Test cookies")]
         public void TestCookie(string expectedCookies)
         {
             CookieContainer cookies = new CookieContainer();
